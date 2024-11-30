@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Produk Skincare</title>
+    <link rel="stylesheet" href="../static/styleindex.css"> <!-- Link to external CSS -->
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Kuis Produk Skincare</h2>
+        <form id="skincare-form" action="#" method="post">
+            <!-- Pertanyaan 1: Produk yang ingin dicari -->
+            <div class="question active" id="question1">
+                <label for="produk">Apa produk yang ingin Anda cari?</label>
+                <select id="produk" name="produk">
+                    <option value="facewash">Facewash</option>
+                    <option value="moisturizer">Moisturizer</option>
+                    <option value="sunscreen">Sunscreen</option>
+                </select>
+                <button type="button" onclick="nextQuestion(1)">Selanjutnya</button>
+            </div>
+
+            <!-- Pertanyaan 2: Tipe kulit -->
+            <div class="question" id="question2">
+                <label for="tipe_kulit">Apa tipe kulit Anda?</label>
+                <select id="tipe_kulit" name="tipe_kulit">
+                    <option value="normal">Normal</option>
+                    <option value="kering">Kering</option>
+                    <option value="berminyak">Berminyak</option>
+                    <option value="kombinasi">Kombinasi</option>
+                    <option value="sensitif">Sensitif</option>
+                </select>
+                <button type="button" onclick="nextQuestion(2)">Selanjutnya</button>
+            </div>
+
+            <!-- Pertanyaan 3: Masalah kulit (Multiple Choice) -->
+            <div class="question" id="question3">
+                <label for="masalah_kulit">Apakah Anda memiliki masalah kulit tertentu? (Pilih semua yang sesuai)</label>
+                <div class="checkbox-group">
+                    <div>
+                        <input type="checkbox" id="hiperpigmentasi" name="masalah_kulit" value="hiperpigmentasi">
+                        <label for="hiperpigmentasi">Hiperpigmentasi</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="jerawat" name="masalah_kulit" value="jerawat">
+                        <label for="jerawat">Jerawat</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="kemerahan" name="masalah_kulit" value="kemerahan">
+                        <label for="kemerahan">Kemerahan</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="garis_halus" name="masalah_kulit" value="garis_halus">
+                        <label for="garis_halus">Garis Halus</label>
+                    </div>
+                </div>
+                <button type="button" onclick="nextQuestion(3)">Selanjutnya</button>
+            </div>
+
+
+            <!-- Pertanyaan 4: Reaksi terhadap bahan (Multiple Choice) -->
+            <div class="question" id="question4">
+                <label for="reaksi_bahan">Apakah kulit Anda cenderung bereaksi terhadap bahan tertentu? (Pilih semua yang sesuai)</label>
+                <div class="checkbox-group">
+                    <div>
+                        <input type="checkbox" id="alkohol" name="reaksi_bahan" value="alkohol">
+                        <label for="alkohol">Alkohol</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="fragrance" name="reaksi_bahan" value="fragrance">
+                        <label for="fragrance">Fragrance</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="paraben" name="reaksi_bahan" value="paraben">
+                        <label for="paraben">Paraben</label>
+                    </div>
+                </div>
+                <button type="button" onclick="nextQuestion(4)">Selanjutnya</button>
+            </div>
+
+            <!-- Pertanyaan 5: Fungsi tambahan produk -->
+            <div class="question" id="question5">
+                <label for="fungsi_tambahan">Apakah Anda mencari produk yang memiliki fungsi tambahan?</label>
+                <div class="checkbox-group">
+                    <div>
+                        <input type="checkbox" id="anti_aging" name="fungsi_tambahan" value="anti_aging">
+                        <label for="anti_aging">Anti-aging</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="brightening" name="fungsi_tambahan" value="brightening">
+                        <label for="brightening">Brightening</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="acne_fighting" name="fungsi_tambahan" value="acne_fighting">
+                        <label for="acne_fighting">Acne-fighting</label>
+                    </div>
+                </div>
+                <button type="button" onclick="nextQuestion(5)">Selanjutnya</button>
+            </div>
+
+            <!-- Pertanyaan 6: Rentang budget -->
+            <div class="question" id="question6">
+                <label for="budget">Kamu punya rentang budget berapa?</label>
+                <select id="budget" name="budget">
+                    <option value="under_50k">Rp 0 - Rp 50.000</option>
+                    <option value="50_100k">Rp 50.000 - Rp 100.000</option>
+                    <option value="100_200k">Rp 100.000 - Rp 200.000</option>
+                    <option value="up_to_200k">Rp 200.000+</option>
+                </select>
+                <button type="submit">Kirim</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Fungsi untuk menampilkan pertanyaan berikutnya
+        function nextQuestion(currentQuestion) {
+            const current = document.getElementById('question' + currentQuestion);
+            current.classList.remove('active');
+            const next = document.getElementById('question' + (currentQuestion + 1));
+            if (next) {
+                next.classList.add('active');
+            }
+        }
+    </script>
+
+</body>
+</html>
