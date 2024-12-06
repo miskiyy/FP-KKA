@@ -1,0 +1,163 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #FCF4B3; /* Light background */
+    margin: 0;
+    padding: 0;
+}
+
+.form-container {
+    width: 90%; /* Ubah dari max-width ke width agar form mengambil 90% dari lebar layar */
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #FFFFFF; /* White background for the form */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+h2 {
+    text-align: center;
+    color: #F78B93; /* Main color for headings */
+}
+
+.question {
+    display: none; /* Hide all questions initially */
+}
+
+.question.active {
+    display: block; /* Show the active question */
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #8CB9EA; /* Color for labels */
+    font-size: 16px;
+}
+
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #84DBFF; /* Light blue border */
+    border-radius: 5px;
+    font-size: 16px; /* Increase font size for better readability */
+    background-color: #fff; /* White background for the select */
+    color: #333; /* Dark text for better contrast */
+    text-align: left;
+}
+
+.checkbox-group {
+    margin-bottom: 20px;
+}
+
+.checkbox-group div {
+    display: flex;
+    align-items: center; /* Vertically align checkbox and label */
+    margin-bottom: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 10px; /* Space between checkbox and label */
+}
+
+.checkbox-group label {
+    font-size: 14px; /* Adjust font size for checkbox labels */
+    margin: 0;
+    display: inline; /* Ensure label is inline with checkbox */
+}
+
+select[multiple] {
+    height: 150px; /* Adjust height for multiple select dropdown */
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 15px;
+    }
+
+    button {
+        padding: 10px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+}
+
+button {
+    background-color: #F78B93; /* Button color */
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #FCF4B3; /* Change on hover */
+    color: #F78B93; /* Change text color on hover */
+}
+
+/* Results Section */
+.results {
+    width: 90%; /* Set width to 90% of the screen */
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #FFFFFF; /* White background for the results */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* Ensures content doesn't overflow horizontally */
+}
+
+/* Styling untuk Tabel Hasil */
+table {
+    width: 100%; /* Ensure table takes up full width */
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensure table columns are evenly distributed */
+}
+
+th, td {
+    padding: 15px; /* Increase padding for table cells */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #F78B93; /* Light pink for header */
+    color: white;
+    font-weight: bold;
+    margin-top: 30cm;
+}
+
+td {
+    background-color: #F9F9F9;
+}
+
+td:hover {
+    background-color: #FCF4B3; /* Highlight row when hovered */
+}
+
+/* Tombol Mulai Lagi */
+button.play-again {
+    background-color: #F78B93; /* Warna pink */
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+button.play-again:hover {
+    background-color: #FCF4B3; /* Warna kuning terang saat hover */
+    color: #F78B93; /* Warna teks menjadi pink saat hover */
+}

@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuis Produk Skincare</title>
-    <link rel="stylesheet" href="../static/styleindex.css"> <!-- Link to external CSS -->
+    <link rel="stylesheet" href="../static/style.css"> <!-- Link ke CSS -->
 </head>
 <body>
-
     <div class="form-container">
         <h2>Kuis Produk Skincare</h2>
-        <form id="skincare-form" action="#" method="post">
+        <form id="skincare-form" action="/" method="post">
+
             <!-- Pertanyaan 1: Produk yang ingin dicari -->
             <div class="question active" id="question1">
                 <label for="produk">Apa produk yang ingin Anda cari?</label>
@@ -29,7 +29,6 @@
                     <option value="normal">Normal</option>
                     <option value="kering">Kering</option>
                     <option value="berminyak">Berminyak</option>
-                    <option value="kombinasi">Kombinasi</option>
                     <option value="sensitif">Sensitif</option>
                 </select>
                 <button type="button" onclick="nextQuestion(2)">Selanjutnya</button>
@@ -55,10 +54,13 @@
                         <input type="checkbox" id="garis_halus" name="masalah_kulit" value="garis_halus">
                         <label for="garis_halus">Garis Halus</label>
                     </div>
+                    <div>
+                        <input type="checkbox" id="tidak_ada" name="tidak_ada" value="tidak_ada">
+                        <label for="tidak_ada">Tidak Ada</label>
+                    </div>
                 </div>
                 <button type="button" onclick="nextQuestion(3)">Selanjutnya</button>
             </div>
-
 
             <!-- Pertanyaan 4: Reaksi terhadap bahan (Multiple Choice) -->
             <div class="question" id="question4">
@@ -75,6 +77,10 @@
                     <div>
                         <input type="checkbox" id="paraben" name="reaksi_bahan" value="paraben">
                         <label for="paraben">Paraben</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="tidak_ada" name="reaksi_bahan" value="tidak_ada">
+                        <label for="tidak_ada">Tidak Ada</label>
                     </div>
                 </div>
                 <button type="button" onclick="nextQuestion(4)">Selanjutnya</button>
@@ -112,7 +118,46 @@
                 <button type="submit">Kirim</button>
             </div>
         </form>
+
+        <!-- Display Results after Quiz -->
+        {% if filtered_data %}
+        <div class="results">
+            <h3>Hasil Pencarian Produk</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Brand</th>
+                        <th>Nama Produk</th>
+                        <th>Kategori</th>
+                        <th>Tipe Kulit</th>
+                        <th>Bahan</th>
+                        <th>Harga</th>
+                        <th>Link Pembelian</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in filtered_data %}
+                    <tr>
+                        <td>{{ item['Brand'] }}</td>
+                        <td>{{ item['NamaProduk'] }}</td>
+                        <td>{{ item['Kategori'] }}</td>
+                        <td>{{ item['SkinType'] }}</td>
+                        <td>{{ item['Ingredients'] }}</td>
+                        <td>{{ item['Harga'] }}</td>
+                        <td>
+                            <a href="{{ item['Link'] }}" target="_blank" rel="noopener noreferrer">Beli di sini</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <!-- Tombol Mulai Lagi -->
+            <button class="play-again" onclick="window.location.href = '/'">Mulai Lagi</button>
+        </div>
+        {% endif %}
     </div>
+
     <script>
         // Fungsi untuk menampilkan pertanyaan berikutnya
         function nextQuestion(currentQuestion) {
@@ -124,6 +169,5 @@
             }
         }
     </script>
-
 </body>
 </html>
