@@ -3,9 +3,6 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Set secret key untuk session
-app.secret_key = 'windut_cantik'
-
 # Load data CSV
 data_path = 'dataskin.csv'
 df = pd.read_csv(data_path, quotechar='"')  # Menangani tanda kutip ganda
