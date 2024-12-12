@@ -161,3 +161,14 @@ button.play-again:hover {
     background-color: #FCF4B3; /* Warna kuning terang saat hover */
     color: #F78B93; /* Warna teks menjadi pink saat hover */
 }
+
+.alert-warning {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-top: 20px;
+    background-color: #ffdddd; /* Ubah warna background sesuai kebutuhan */
+    color: #d9534f; /* Ubah warna text jika perlu */
+}

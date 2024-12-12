@@ -5,7 +5,7 @@ from constraint import Problem
 app = Flask(__name__)
 
 # Load data CSV
-data_path = 'FP-KKA/dataskin.csv'
+data_path = 'dataskin.csv'
 df = pd.read_csv(data_path, quotechar='"')
 
 # Price filter ranges
@@ -131,7 +131,7 @@ def home():
                             lambda i: any(f.lower() in i.lower() for f in fungsi_list),
                             ["Ingredients"],
                         )
-                        
+
             # Rentang harga
             if "budget" in request.form:
                 budget = request.form.get("budget")  # Rentang harga yang dipilih pengguna
@@ -175,10 +175,17 @@ def home():
                         lambda x: any(ingredient.lower() in x.lower() for ingredient in matched_ingredients)
                     )]
 
-                # Convert filtered DataFrame to dictionary
-                filtered_data = filtered_df.to_dict(orient="records")
-            else:
-                no_results_message = "Produk tidak ditemukan berdasarkan kriteria yang dipilih."
+                # Cek apakah ada hasil setelah filter
+                if filtered_df.empty:
+                    no_results_message = "Produk tidak ditemukan berdasarkan kriteria yang dipilih."
+                else:
+                    # Convert filtered DataFrame to dictionary
+                    filtered_data = filtered_df.to_dict(orient="records")
+
+                # Debugging log jika tidak ada produk
+                if not filtered_data:
+                    print("No products found!")
+
 
         except Exception as e:
             print(f"Error: {e}")
