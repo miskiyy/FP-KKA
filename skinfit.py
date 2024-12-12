@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request
 import pandas as pd
+from constraint import Problem
 
 app = Flask(__name__)
 
 # Load data CSV
-data_path = 'dataskin.csv'
-df = pd.read_csv(data_path, quotechar='"')  # Menangani tanda kutip ganda
+data_path = 'FP-KKA/dataskin.csv'
+df = pd.read_csv(data_path, quotechar='"')
 
 # Price filter ranges
 price_filter = {
@@ -18,8 +19,8 @@ price_filter = {
 @app.route("/", methods=["GET", "POST"])
 def home():
     filtered_data = []
-    no_results_message = ""  # Pesan jika tidak ada produk yang ditemukan
-    
+    no_results_message = ""
+
     # Ingredients filter sesuai masalah kulit
     ingredients_filter = {
         "hiperpigmentasi": ["Vitamin C", "Ascorbic Acid", "Niacinamide", "Arbutin", "Licorice Extract", "Kojic Acid", "Glycolic Acid", "Salicylic Acid", "Lactic Acid", "Azelaic Acid", "Mulberry Extract", "Green Tea Extract", "Papaya Enzyme", "Retinoid", "Retinol", "Ceramides", "Hyaluronic Acid"],
@@ -59,68 +60,124 @@ def home():
                           "Beta Hydroxy Acid (BHA)", "Retinol", "Retinoid", "Glycolic Acid", "Lactic Acid", "Clindamycin", 
                           "Dapsone", "Azelaic Acid", "Panthenol", "Ceramides", "Squalane"]
     }
-    
+
+    # Price filter ranges
+    price_filter = {
+        "under_50k": (0, 50000),
+        "50_100k": (51000, 100000),
+        "100_200k": (101000, 200000),
+        "up_to_200k": (201000, 1000000)
+    }
+
     if request.method == "POST":
         try:
-            # Ambil data dari form
-            produk = request.form.get("produk")        # Kategori produk (misal: Facewash)
-            tipe_kulit = request.form.get("tipe_kulit") # Jenis kulit (misal: Berminyak)
-            masalah_kulit = request.form.getlist("masalah_kulit")  # Masalah kulit (misal: jerawat)
-            reaksi_bahan = request.form.getlist("reaksi_bahan")  # Reaksi terhadap bahan
-            fungsi_tambahan = request.form.getlist("fungsi_tambahan")  # Fungsi tambahan yang dipilih
-            harga_range = request.form.get("harga_range")  # Range harga
-
-            # Mulai dengan filter berdasarkan kategori dan tipe kulit
+            # Salin DataFrame asli
             filtered_df = df.copy()
 
-            # Filter berdasarkan kategori produk
+            # Ambil data dari form
+            produk = request.form.get("produk")  # Kategori produk
+            tipe_kulit = request.form.get("tipe_kulit")  # Jenis kulit
+            masalah_kulit = request.form.getlist("masalah_kulit")  # Masalah kulit
+            reaksi_bahan = request.form.getlist("reaksi_bahan")  # Reaksi terhadap bahan
+            fungsi_tambahan = request.form.getlist("fungsi_tambahan")  # Fungsi tambahan
+            harga = request.form.getlist("budget")  # budget
+
+            # CSP Setup
+            problem = Problem()
+
+            # Variabel CSP
+            problem.addVariable("Produk", filtered_df["Kategori"].unique())
+            problem.addVariable("SkinType", filtered_df["SkinType"].unique())
+            problem.addVariable("Ingredients", filtered_df["Ingredients"])
+            problem.addVariable("Harga", filtered_df["Harga"].unique())
+
+            # Constraints
             if produk:
-                filtered_df = filtered_df[filtered_df["Kategori"].str.contains(produk, case=False, na=False)]
+                problem.addConstraint(lambda p: p.lower() == produk.lower(), ["Produk"])
 
-            # Filter berdasarkan tipe kulit
-            if tipe_kulit and tipe_kulit != "All Skin Type":
-                filtered_df = filtered_df[filtered_df["SkinType"].str.contains(tipe_kulit, case=False, na=False)]
+            if tipe_kulit:
+                if tipe_kulit.lower().strip() == "all skin type":
+                    # Jika tipe kulit "All Skin Type", maka tampilkan produk yang sesuai dengan "All Skin Type"
+                    problem.addConstraint(lambda s: s.strip().lower() == "all skin type", ["SkinType"])
+                else:
+                    # Untuk tipe kulit lain seperti "normal", "kering", "berminyak", "sensitif"
+                    problem.addConstraint(lambda s: s.strip().lower() == tipe_kulit.lower(), ["SkinType"])
 
-            # Jika tidak ada produk setelah filter kategori dan tipe kulit, kirim pesan dan hentikan
-            if filtered_df.empty:
-                no_results_message = "Produk tidak ditemukan berdasarkan kategori dan tipe kulit yang dipilih."
-                return render_template("index.html", filtered_data=filtered_data, no_results_message=no_results_message)
 
-            # Sekarang filter berdasarkan masalah kulit dan ingredients terkait, hanya jika masih ada produk
             if masalah_kulit:
                 matched_ingredients = []
                 for masalah in masalah_kulit:
-                    matched_ingredients.extend(ingredients_filter.get(masalah, []))  # Ambil ingredients sesuai masalah kulit
-                # Filter berdasarkan ingredients yang relevan dengan masalah kulit
+                    matched_ingredients.extend(ingredients_filter.get(masalah, []))
                 if matched_ingredients:
-                    filtered_df = filtered_df[filtered_df["Ingredients"].str.contains("|".join(matched_ingredients), case=False, na=False)]
+                    problem.addConstraint(
+                        lambda i: any(ingredient.lower() in i.lower() for ingredient in matched_ingredients),
+                        ["Ingredients"],
+                    )
 
-            # Filter berdasarkan reaksi bahan (alkohol, fragrance, paraben)
             if reaksi_bahan:
                 for bahan in reaksi_bahan:
-                    if bahan in reaksi_bahan_filter:  # Cek jika bahan ada di filter
+                    if bahan in reaksi_bahan_filter:
                         bahan_list = reaksi_bahan_filter[bahan]
-                        # Exclude produk yang mengandung bahan yang dipilih
-                        filtered_df = filtered_df[~filtered_df["Ingredients"].str.contains("|".join(bahan_list), case=False, na=False)]
+                        problem.addConstraint(
+                            lambda i: all(b not in i.lower() for b in bahan_list),
+                            ["Ingredients"],
+                        )
 
-            # Filter berdasarkan fungsi tambahan (anti-aging, brightening, acne-fighting)
             if fungsi_tambahan:
                 for fungsi in fungsi_tambahan:
-                    if fungsi in fungsi_tambahan_filter:  # Cek jika fungsi ada di filter
+                    if fungsi in fungsi_tambahan_filter:
                         fungsi_list = fungsi_tambahan_filter[fungsi]
-                        # Include hanya produk yang mengandung fungsi tambahan yang dipilih
-                        filtered_df = filtered_df[filtered_df["Ingredients"].str.contains("|".join(fungsi_list), case=False, na=False)]
+                        problem.addConstraint(
+                            lambda i: any(f.lower() in i.lower() for f in fungsi_list),
+                            ["Ingredients"],
+                        )
+                        
+            # Rentang harga
+            if "budget" in request.form:
+                budget = request.form.get("budget")  # Rentang harga yang dipilih pengguna
+                if budget and budget in price_filter:
+                    min_price, max_price = price_filter[budget]
+                    # Filter harga pada dataframe
+                    filtered_df = filtered_df[(filtered_df["Harga"] >= min_price) & (filtered_df["Harga"] <= max_price)]
+                else:
+                    no_results_message = "Rentang harga tidak valid."
 
-            # Filter berdasarkan harga jika ada pilihan
-            if harga_range and harga_range in price_filter:
-                min_price, max_price = price_filter[harga_range]
-                filtered_df = filtered_df[(filtered_df["Harga"] >= min_price) & (filtered_df["Harga"] <= max_price)]
+            filtered_df = filtered_df.sort_values(by="Harga", ascending=True)
+            filtered_df["Harga"] = filtered_df["Harga"].apply(lambda x: f"Rp {x:,.0f}")
 
-            # Setelah semua filter, ubah DataFrame menjadi list of dictionaries
-            filtered_data = filtered_df.to_dict(orient="records")
+            # Cari solusi
+            solutions = problem.getSolutions()
 
-            # Jika masih kosong setelah filtering ingredients, beri pesan
-            if not filtered_data:
+            # Cari solusi
+            solutions = problem.getSolutions()
+
+            # Filter DataFrame berdasarkan solusi
+            if solutions:
+                solution_ingredients = [sol["Ingredients"] for sol in solutions]
+                filtered_df = filtered_df[filtered_df["Ingredients"].isin(solution_ingredients)]
+                
+                # Filter lebih lanjut berdasarkan kategori produk yang dipilih
+                if produk:
+                    filtered_df = filtered_df[filtered_df["Kategori"].str.lower() == produk.lower()]
+                
+                # Filter lebih lanjut berdasarkan tipe kulit yang dipilih
+                if tipe_kulit:
+                    if tipe_kulit == "All Skin Type":
+                        # Jika tipe kulit "All Skin Type", tampilkan produk yang hanya memiliki "All Skin Type"
+                        filtered_df = filtered_df[filtered_df["SkinType"].str.strip() == "All Skin Type"]
+                    else:
+                        # Untuk tipe kulit lain seperti "normal", "kering", "berminyak", "sensitif"
+                        filtered_df = filtered_df[filtered_df["SkinType"].str.lower() == tipe_kulit.lower()]
+
+                # Filter berdasarkan masalah kulit yang dipilih
+                if masalah_kulit:
+                    filtered_df = filtered_df[filtered_df["Ingredients"].apply(
+                        lambda x: any(ingredient.lower() in x.lower() for ingredient in matched_ingredients)
+                    )]
+
+                # Convert filtered DataFrame to dictionary
+                filtered_data = filtered_df.to_dict(orient="records")
+            else:
                 no_results_message = "Produk tidak ditemukan berdasarkan kriteria yang dipilih."
 
         except Exception as e:
@@ -128,7 +185,6 @@ def home():
             no_results_message = "Terjadi kesalahan saat memproses pencarian."
 
     return render_template("index.html", filtered_data=filtered_data, no_results_message=no_results_message)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
