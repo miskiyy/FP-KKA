@@ -8,14 +8,6 @@ app = Flask(__name__)
 data_path = 'dataskin.csv'
 df = pd.read_csv(data_path, quotechar='"')
 
-# Price filter ranges
-price_filter = {
-    "under_50k": (0, 50000),
-    "50_100k": (51000, 100000),
-    "100_200k": (101000, 200000),
-    "up_to_200k": (201000, 1000000)
-}
-
 @app.route("/", methods=["GET", "POST"])
 def home():
     filtered_data = []
