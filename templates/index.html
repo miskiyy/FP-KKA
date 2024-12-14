@@ -5,9 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuis Produk Skincare</title>
     <link rel="stylesheet" href="../static/style.css"> <!-- Link ke CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
 </head>
 <body>
-    <div class="form-container">
+    <div class="container">
+   <div class="header">
+    Skinfit
+   </div>
+   <div class="content">
+    <div class="text-content">
+     <h1>
+        <!-- make header for skincare web reccomendation -->
+        
+      <span>
+       Know Your Skin
+      </span>
+      <span>
+       Make It Fit
+      </span>
+      <span>
+       Let's Glow
+      </span>
+     </h1>
+     <p>
+      <!-- skincare reccomendation landing page -->
+        We've compiled a list of skincare products that cater to various skin types, problem, and needs. 
+     </p>
+     <button onclick="scrollToForm()">Find out</button>
+    </div>
+    <div class="image-content">
+     <div class="small-image">
+      <img alt="" src="https://tse2.mm.bing.net/th?id=OIP.xpea-8JzuvP8cxi1NBAjuQHaD4&pid=Api&P=0&h=180"/>
+     </div>
+     <div class="small-image">
+      <img alt="" src="https://successiblelife.com/wp-content/uploads/2020/06/Best-Drugstore-Skincare.jpg"/>
+     </div>
+     <div class="large-image">
+      <img alt="" src="https://i.pinimg.com/736x/96/4e/ed/964eed72fb4c491e6aebcaa17c193728.jpg"/>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="separator">
+   Discover Your Perfect Skincare
+  </div>
+    <!-- Form -->
+    <div class="form-container" id="skincare-form-head">
         <h2>Kuis Produk Skincare</h2>
         <form id="skincare-form" action="/" method="post">
 
@@ -169,8 +213,22 @@
         </div>
         {% endif %}
     </div>
+    <div class="footer">
+   <p>
+    Thank you for visiting our page!
+   </p>
+   <p>
+    "Invest in your skin. It is going to represent you for a very long time."
+   </p>
+  </div>
 
     <script>
+        function scrollToForm() {
+            // Get the element by its ID
+            const formSection = document.getElementById('skincare-form-head');
+            // Scroll to the element smoothly
+            formSection.scrollIntoView({ behavior: 'smooth' });
+        }
         // Fungsi untuk menampilkan pertanyaan berikutnya
         function nextQuestion(currentQuestion) {
             const current = document.getElementById('question' + currentQuestion);
